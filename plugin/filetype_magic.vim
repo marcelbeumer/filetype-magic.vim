@@ -50,6 +50,12 @@ function! PHPEditIncludeLineParser(line)
     return DefaultIncludeLineParser(line)
 endfunction
 
+function! SUITEditIncludeLineParser(line)
+    " Find class="..." and break off _ and - so we match the component name
+    let line = substitute(a:line, '.*class=".\{-}\(\w\{-}\)[_-].*', '"\1"', 'g')
+    return DefaultIncludeLineParser(line)
+endfunction
+
 function! PHPEditIncludePathResolver(fname)
     let fname = a:fname
     if stridx(fname, ':') != -1
@@ -60,6 +66,7 @@ endfunction
 
 function! TwigEditIncludePathResolver(fname)
     let fname = a:fname
+    " let fname = SUITEditIncludePathResolver(fname)
     let fname = substitute(fname, ':', '/', 'g')
     let fname = substitute(fname, '^InterNations\(.\{-}\)Bundle', '\1Bundle/Resources/views/', 'g')
     return fname
@@ -88,7 +95,14 @@ endfunction
 "  endfunction
 
 function! HTMLTwigSettings()
-    call EditIncludeBufferSetup('TwigEditIncludePathResolver', '')
+    call EditIncludeBufferSetup('TwigEditIncludePathResolver', 'SUITEditIncludeLineParser')
+    setlocal suffixesadd+=.less
+    setlocal path+=app-new/src/**
+endfunction
+
+function! HTMLSettings()
+    call EditIncludeBufferSetup('', 'SUITEditIncludeLineParser')
+    setlocal suffixesadd+=.less
     setlocal path+=app-new/src/**
 endfunction
 
@@ -105,5 +119,6 @@ endfunction
 
 autocmd FileType php call PHPSettings()
 autocmd FileType javascript call JavaScriptSettings()
+autocmd FileType html call HTMLSettings()
 autocmd FileType html.twig call HTMLTwigSettings()
 autocmd FileType xml call XMLSettings()
