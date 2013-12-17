@@ -111,4 +111,7 @@ autocmd FileType php call PHPSettings()
 autocmd FileType javascript call JavaScriptSettings()
 autocmd FileType html call HTMLSettings()
 autocmd FileType html.twig call HTMLTwigSettings()
+" Because some people (cough vitor cough) use this trick for twig syntax
+" highlighting
+autocmd FileType htmljinja call HTMLTwigSettings()
 autocmd FileType xml call XMLSettings()
